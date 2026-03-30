@@ -549,6 +549,21 @@
         }
 
         /* ── Strategy hint ── */
+        .hint-btn {
+            background: none;
+            border: 1px solid rgba(52, 152, 219, .4);
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 12px;
+            color: #5dade2;
+            cursor: pointer;
+            display: none;
+        }
+
+        .hint-btn.show {
+            display: inline-block;
+        }
+
         .strategy-hint {
             display: none;
             background: rgba(52, 152, 219, .1);
@@ -771,6 +786,7 @@
                 </div>
 
                 <div class="feedback" id="feedback"></div>
+                <button class="hint-btn" id="hint-btn" onclick="revealHint()">&#128161; Show hint</button>
                 <div class="strategy-hint" id="strategy-hint"></div>
 
                 <div class="controls">
@@ -1182,6 +1198,7 @@
 
             hideFeedback();
             document.getElementById('strategy-hint').className = 'strategy-hint';
+            document.getElementById('hint-btn').className = 'hint-btn';
             state.phase = 'player';
             state.doubled = false;
             state.activeSplit = false;
@@ -1210,12 +1227,17 @@
         }
 
         function showStrategyHint() {
+            document.getElementById('hint-btn').className = 'hint-btn show';
+        }
+
+        function revealHint() {
             const upcard = state.dealerHand.find(c => !c.faceDown);
             if (!upcard) return;
             const strat = getBasicStrategy(state.playerHand, upcard.rank);
             const hint = document.getElementById('strategy-hint');
             hint.className = 'strategy-hint show';
             hint.innerHTML = '&#128161; Basic strategy says <strong>' + strat.action.toUpperCase() + '</strong> — ' + strat.reason;
+            document.getElementById('hint-btn').className = 'hint-btn';
         }
 
         function updateActionButtons() {
