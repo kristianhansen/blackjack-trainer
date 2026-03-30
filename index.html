@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kristian's Blackjack Trainer</title>
+    <title>Blackjack Trainer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap"
@@ -720,16 +720,91 @@
                 grid-template-columns: repeat(7, 1fr);
             }
         }
+        /* ── Name modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal-overlay.hidden { display: none; }
+
+        .modal-box {
+            background: var(--panel);
+            border: 1px solid rgba(201,168,76,.25);
+            border-radius: 14px;
+            padding: 36px 40px;
+            text-align: center;
+            width: 340px;
+        }
+
+        .modal-box h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .modal-box p {
+            color: var(--text2);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .modal-box input {
+            width: 100%;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(201,168,76,.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .modal-box input:focus {
+            border-color: var(--gold);
+        }
+
+        .modal-box button {
+            background: var(--gold);
+            color: #0e2518;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Name modal -->
+    <div class="modal-overlay" id="name-modal">
+        <div class="modal-box">
+            <h2>&#9824; Welcome</h2>
+            <p>Enter your name to get started</p>
+            <input type="text" id="name-input" placeholder="Your name" maxlength="30" />
+            <br>
+            <button onclick="submitName()">Let's Play</button>
+        </div>
+    </div>
+
     <div id="app">
 
         <!-- Header -->
         <div class="header">
             <div class="header-left">
-                <div class="title">&#9824; Kristian's Blackjack Trainer</div>
+                <div class="title">&#9824; <span id="player-name-title">Player</span>'s Blackjack Trainer</div>
                 <div class="subtitle">Hi-Lo Card Counting &amp; Basic Strategy</div>
             </div>
             <div class="mode-btns">
@@ -783,7 +858,7 @@
                     </div>
                 </div>
                 <div class="table-divider"></div>
-                <div class="table-label">Kristian</div>
+                <div class="table-label" id="player-name-label">Player</div>
                 <div class="hand-zone">
                     <div class="cards-row" id="player-cards"></div>
                     <div class="hand-info">
@@ -1414,7 +1489,7 @@
             state.phase = 'bet';
             if (state.balance <= 0) {
                 state.balance = 1000;
-                showFeedback('warn', '&#128176; Reloaded $1000. Keep practising your strategy, Kristian!');
+                showFeedback('warn', '&#128176; Reloaded $1000. Keep practising your strategy, ' + (localStorage.getItem('bjt-player-name') || 'player') + '!');
             }
             setTimeout(() => {
                 document.getElementById('bet-zone').style.display = 'flex';
@@ -1600,6 +1675,30 @@
         updateCountDisplay();
         document.getElementById('tc-bar').style.display = 'none';
         document.getElementById('count-check-zone').style.display = 'none';
+
+        function applyPlayerName(name) {
+            document.getElementById('player-name-title').textContent = name;
+            document.getElementById('player-name-label').textContent = name;
+            document.title = name + "'s Blackjack Trainer";
+        }
+
+        function submitName() {
+            const name = document.getElementById('name-input').value.trim();
+            if (!name) return;
+            localStorage.setItem('bjt-player-name', name);
+            applyPlayerName(name);
+            document.getElementById('name-modal').classList.add('hidden');
+        }
+
+        document.getElementById('name-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitName();
+        });
+
+        const savedName = localStorage.getItem('bjt-player-name');
+        if (savedName) {
+            applyPlayerName(savedName);
+            document.getElementById('name-modal').classList.add('hidden');
+        }
     </script>
 </body>
 
