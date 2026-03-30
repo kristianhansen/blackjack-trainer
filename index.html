@@ -1476,11 +1476,12 @@
             if (suit) suit.style.fontSize = '20px';
 
             const badge = document.createElement('div');
+            badge.className = 'cp-badge';
             badge.textContent = delta > 0 ? '+1' : delta < 0 ? '-1' : '0';
             badge.style.cssText =
                 'position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);' +
                 'font-size:10px;font-family:"DM Mono",monospace;font-weight:500;' +
-                'padding:1px 5px;border-radius:8px;white-space:nowrap;' +
+                'padding:1px 5px;border-radius:8px;white-space:nowrap;visibility:hidden;' +
                 'background:' + (delta > 0 ? 'rgba(39,174,96,.85)' : delta < 0 ? 'rgba(231,76,60,.85)' : 'rgba(255,255,255,.2)') + ';' +
                 'color:' + (delta !== 0 ? 'white' : '#aaa') + ';';
             el.appendChild(badge);
@@ -1498,6 +1499,7 @@
         }
 
         function checkCPCount() {
+            document.querySelectorAll('.cp-badge').forEach(b => b.style.visibility = 'visible');
             if (state.cpGuess === state.cpCount) {
                 state.cpStreak = (state.cpStreak || 0) + 1;
                 showFeedback('correct',
